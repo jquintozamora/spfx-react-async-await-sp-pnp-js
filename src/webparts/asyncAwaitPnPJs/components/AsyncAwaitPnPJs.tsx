@@ -44,65 +44,12 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     // but using Async function we can't convert it into arrow function, so we do the binding here
     this.readAllFilesSize.bind(this);
 
-
-    ////////////////////////////////////////////////////////////////////////
-    // enable Logging system
-    ////////////////////////////////////////////////////////////////////////
-    // we will integrate PnP JS Logging System with SPFx Logging system
-    // 1. Logger object = PnP JS Logger
-    //    https://github.com/SharePoint/PnP-JS-Core/wiki/Working-With:-Logging
-    // 2. Log object = SPFx Logger
-    //    https://github.com/SharePoint/sp-dev-docs/wiki/Working-with-the-Logging-API
-    ////////////////////////////////////////////////////////////////////////
-
-    // for developement activate Info level
-    Logger.activeLogLevel = LogLevel.Info;
-
-    // pnp-js Logger. subscribe a custom listener integrated with SPFx Logging system
-    let listener = new FunctionListener((entry: LogEntry) => {
-      const componentName: string = (this as any)._reactInternalInstance._currentElement.type.name;
-
-      // instead of using switch we use this easy syntax
-      const logLevelConversion = { Verbose: "verbose", Info: "info", Warning: "warn", Error: "error" };
-
-      // we need to trick the message using Error constructor in order to avoit the 24 chara
-      const formatedMessage: Error = new Error(`Message: ${entry.message} Data: ${JSON.stringify(entry.data)}`);
-
-      Log[logLevelConversion[LogLevel[entry.level]]](componentName, formatedMessage);
-    });
-    Logger.subscribe(listener);
+    // enable PnP JS Logging integrated with SPFx Logging
+    this._enableLogging();
   }
-
 
   public componentDidMount(): void {
-    // this.readItems();
     this.readAllFilesSize("Documents");
-  }
-
-  private async readAllFilesSize(libraryName: string): Promise<void> {
-    try {
-      const response: IResponseItem[] = await pnp.sp
-        .web
-        .lists
-        .getByTitle(libraryName)
-        .items
-        .select("Title", "FileLeafRef")
-        .expand("File/Length")
-        .usingCaching()
-        .get();
-      const items: IFile[] = response.map((item: IResponseItem) => {
-        return {
-          Title: item.Title,
-          Size: item.File.Length,
-          Name: item.FileLeafRef
-        };
-      });
-      this.setState({ items });
-    } catch (error) {
-      // throw new Error(error);
-      // do something with State
-      this.setState({ items: [] });
-    }
   }
 
   public render(): React.ReactElement<IAsyncAwaitPnPJsProps> {
@@ -141,5 +88,63 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
         </div>
       </div>
     );
+  }
+
+  private async readAllFilesSize(libraryName: string): Promise<void> {
+    try {
+      const response: IResponseItem[] = await pnp.sp
+        .web
+        .lists
+        .getByTitle(libraryName)
+        .items
+        .select("Title", "FileLeafRef")
+        .expand("File/Length")
+        .usingCaching()
+        .get();
+      const items: IFile[] = response.map((item: IResponseItem) => {
+        return {
+          Title: item.Title,
+          Size: item.File.Length,
+          Name: item.FileLeafRef
+        };
+      });
+      this.setState({ items });
+    } catch (error) {
+      // throw new Error(error);
+      // do something with State
+      this.setState({ items: [] });
+    }
+  }
+
+  private _enableLogging() {
+    ////////////////////////////////////////////////////////////////////////
+    // enable Logging system
+    ////////////////////////////////////////////////////////////////////////
+    // we will integrate PnP JS Logging System with SPFx Logging system
+    // 1. Logger object => PnP JS Logger
+    //    https://github.com/SharePoint/PnP-JS-Core/wiki/Working-With:-Logging
+    // 2. Log object => SPFx Logger
+    //    https://github.com/SharePoint/sp-dev-docs/wiki/Working-with-the-Logging-API
+    ////////////////////////////////////////////////////////////////////////
+    // [PnP JS Logging] activate Info level
+    Logger.activeLogLevel = LogLevel.Info;
+    // [PnP JS Logging] create a custom FunctionListener to integrate PnP JS and SPFx Logging systems
+    let listener = new FunctionListener((entry: LogEntry) => {
+      // get React component name
+      const componentName: string = (this as any)._reactInternalInstance._currentElement.type.name;
+      // mapping betwween PnP JS Log types and SPFx logging methods
+      // instead of using switch we use object easy syntax
+      const logLevelConversion = { Verbose: "verbose", Info: "info", Warning: "warn", Error: "error" };
+      // create Message. Two importante notes here:
+      // 1. Use JSON.stringify to output everything. It´s helpful when some internal exception comes thru.
+      // 2. Use JavaScript´s Error constructor allows us to output more than 100 characters using SPFx logging
+      const formatedMessage: Error = new Error(`Message: ${entry.message} Data: ${JSON.stringify(entry.data)}`);
+      // [SPFx Logging] Calculate method to invoke verbose, info, warn or error
+      const method = logLevelConversion[LogLevel[entry.level]];
+      // [SPFx Logging] Call SPFx Logging system with the message received from PnP JS Logging
+      Log[method](componentName, formatedMessage);
+    });
+    // [PnP JS Logging] Once create the custom listerner we should subscribe to it
+    Logger.subscribe(listener);
   }
 }
