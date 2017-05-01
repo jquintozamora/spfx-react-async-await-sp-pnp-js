@@ -92,7 +92,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       const response: IResponseItem[] = await pnp.sp.web.lists
         .getByTitle(libraryName)
         .items
-        .select("Title", "FileLeafRef", "assdafa")
+        .select("Title", "FileLeafRef")
         .expand("File/Length")
         .usingCaching()
         .get();
