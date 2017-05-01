@@ -1,3 +1,5 @@
+import {IFile} from "../interfaces";
 export interface IAsyncAwaitPnPJsState {
-  items: any[];
+  items: IFile[];
+  errors: string[];
 }

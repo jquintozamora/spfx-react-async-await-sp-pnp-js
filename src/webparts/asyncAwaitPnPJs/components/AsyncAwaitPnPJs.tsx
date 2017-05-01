@@ -1,28 +1,11 @@
 import * as React from "react";
 import styles from "./AsyncAwaitPnPJs.module.scss";
 
-// create PnP JS response interface for File
-interface IResponseFile {
-  Length: number;
-}
-
-// create PnP JS response interface for Item
-interface IResponseItem {
-  File: IResponseFile;
-  FileLeafRef: string;
-  Title: string;
-}
-
-// create File item to work with it internally
-interface IFile {
-  Title: string;
-  Name: string;
-  Size: number;
-}
+// import interfaces
+import { IFile, IResponseFile, IResponseItem } from "../interfaces"
 
 // import pnp and pnp logging system
 import pnp, { Logger, FunctionListener, LogEntry, LogLevel } from "sp-pnp-js";
-
 // import SPFx Logging system
 import { Log } from "@microsoft/sp-core-library";
 
@@ -36,25 +19,30 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     super(props);
     // set initial state
     this.state = {
-      items: []
+      items: [],
+      errors: []
     };
 
     // normally we don't need to bind the functions as we use arrow functions and do automatically the bing
-    // https://blog.josequinto.com/2016/12/07/react-use-es6-arrow-functions-in-classes-to-avoid-binding-your-methods-with-the-current-this-object/
+    // http://bit.ly/reactArrowFunction
     // but using Async function we can't convert it into arrow function, so we do the binding here
-    this.readAllFilesSize.bind(this);
+    this._readAllFilesSize.bind(this);
 
     // enable PnP JS Logging integrated with SPFx Logging
     this._enableLogging();
   }
 
   public componentDidMount(): void {
-    this.readAllFilesSize("Documents");
+    // read all file sizes from Documents library
+    this._readAllFilesSize("Documents");
   }
 
   public render(): React.ReactElement<IAsyncAwaitPnPJsProps> {
+    // calculate total of file sizes
     const totalDocs: number = this.state.items.length > 0
-      ? this.state.items.reduce<number>((acc: number, item: IFile) => { return (acc + Number(item.Size)); }, 0)
+      ? this.state.items.reduce<number>((acc: number, item: IFile) => {
+        return (acc + Number(item.Size));
+      }, 0)
       : 0;
     return (
       <div className={styles.container}>
@@ -65,14 +53,14 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
             <div>
               <div className={styles.row}>
                 <div className={styles.left}>Name</div>
-                <div className={styles.right}>Size</div>
+                <div className={styles.right}>Size (KB)</div>
                 <div className={styles.clear + " " + styles.header}></div>
               </div>
               {this.state.items.map((item) => {
                 return (
                   <div className={styles.row}>
                     <div className={styles.left}>{item.Name}</div>
-                    <div className={styles.right}>{item.Size}</div>
+                    <div className={styles.right}>{(item.Size / 1024).toFixed(2)}</div>
                     <div className={styles.clear}></div>
                   </div>
                 );
@@ -80,7 +68,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
               <div className={styles.row}>
                 <div className={styles.clear + " " + styles.header}></div>
                 <div className={styles.left}>Total: </div>
-                <div className={styles.right}>{totalDocs}</div>
+                <div className={styles.right}>{(totalDocs / 1024).toFixed(2)}</div>
                 <div className={styles.clear + " " + styles.header}></div>
               </div>
             </div>
@@ -90,17 +78,26 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     );
   }
 
-  private async readAllFilesSize(libraryName: string): Promise<void> {
+  // Async functions were introduced with ES3/ES5 native support in TypeScript 2.1
+  // https://blogs.msdn.microsoft.com/typescript/2016/12/07/announcing-typescript-2-1/
+  // Async function always return a Promise, on this scenario we return void Promise
+  //   because we will not need it as we are directly setting the Component´s state
+  private async _readAllFilesSize(libraryName: string): Promise<void> {
     try {
-      const response: IResponseItem[] = await pnp.sp
-        .web
-        .lists
+      // do PnP JS query, some notes:
+      //   - .expand() method will retrive Item.File item but only Length property
+      //   - .usingCaching() will be using SessionStorage by default to cache the  results
+      //   - .get() always returns a promise
+      //   - await converts Promise<IResponseItem[]> into IResponse[]
+      const response: IResponseItem[] = await pnp.sp.web.lists
         .getByTitle(libraryName)
         .items
-        .select("Title", "FileLeafRef")
+        .select("Title", "FileLeafRef", "assdafa")
         .expand("File/Length")
         .usingCaching()
         .get();
+
+      // use map to convert IResponseItem[] into our internal object IFile[]
       const items: IFile[] = response.map((item: IResponseItem) => {
         return {
           Title: item.Title,
@@ -108,11 +105,13 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
           Name: item.FileLeafRef
         };
       });
-      this.setState({ items });
+
+      // Set our Component´s State
+      this.setState({ ...this.state, items });
+
     } catch (error) {
-      // throw new Error(error);
-      // do something with State
-      this.setState({ items: [] });
+      // set a new state conserving the previous state + the new error
+      this.setState({ ...this.state, errors: [...this.state.errors, error] });
     }
   }
 
