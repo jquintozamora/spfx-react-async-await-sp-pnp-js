@@ -54,7 +54,7 @@ https://your-domain.sharepoint.com/_layouts/15/workbench.aspx
 - React Container for the initial load. [Smart Component](https://github.com/jquintozamora/spfx-react-async-await-sp-pnp-js/blob/master/src/webparts/asyncAwaitPnPJs/components/IAsyncAwaitPnPJsState.ts)
 - [Interface best practices](https://github.com/jquintozamora/spfx-react-async-await-sp-pnp-js/tree/master/src/webparts/asyncAwaitPnPJs/interfaces)
 - [PnP JS and SPFx Logging systems integration](https://blog.josequinto.com/2017/04/30/how-to-integrate-pnp-js-core-and-sharepoint-framework-logging-systems)
-  - ![React-sp-pnp-js-async-await-code](./assets/async-await-sp-pnp-js-2.png)
+![React-sp-pnp-js-async-await-code](./assets/pnp-js-logging-spfx.png)
 
 
 
