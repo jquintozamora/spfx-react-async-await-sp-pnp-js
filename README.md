@@ -1,7 +1,7 @@
 # React sample showing the use of sp-pnp-js with Async / Await
 
 ## Summary
-This webpart demonstrates how to use [PnP JS Core](https://github.com/SharePoint/PnP-JS-Core) with Async functions into the SharePoint Framework as well as integrating [PnP JS and SPFx Logging systems](https://blog.josequinto.com/2017/04/30/how-to-integrate-pnp-js-core-and-sharepoint-framework-logging-systems/).
+This webpart demonstrates how to use [PnP JS Core](https://github.com/SharePoint/PnP-JS-Core) with Async functions into the SharePoint Framework as well as integrating [PnP JS and SPFx Logging systems](https://blog.josequinto.com/2017/04/30/how-to-integrate-pnp-js-core-and-sharepoint-framework-logging-systems/). Real example querying SharePoint library to show document sizes.
 
 ![React-sp-pnp-js-async-await](./assets/react-async-await-sp-pnp-js.png)
 
@@ -51,8 +51,8 @@ https://your-domain.sharepoint.com/_layouts/15/workbench.aspx
 
 ## Features
 - [Async / Await functionality working with PnP JS sample](https://github.com/jquintozamora/spfx-react-async-await-sp-pnp-js/blob/master/src/webparts/asyncAwaitPnPJs/components/AsyncAwaitPnPJs.tsx#L93)
-- React Container. [Smart Component](https://github.com/jquintozamora/spfx-react-async-await-sp-pnp-js/blob/master/src/webparts/asyncAwaitPnPJs/components/IAsyncAwaitPnPJsState.ts)
-- Custom scss table
+- React Container for the initial load. [Smart Component](https://github.com/jquintozamora/spfx-react-async-await-sp-pnp-js/blob/master/src/webparts/asyncAwaitPnPJs/components/IAsyncAwaitPnPJsState.ts)
+- [Interface best practices](https://github.com/jquintozamora/spfx-react-async-await-sp-pnp-js/tree/master/src/webparts/asyncAwaitPnPJs/interfaces)
 - [PnP JS and SPFx Logging systems integration](./assets/pnp-js-logging-spfx.png)
   - [SPFx Log class](https://dev.office.com/sharepoint/reference/spfx/sp-core-library/log)
   - [SPFx. Working with the Logging API](https://github.com/SharePoint/sp-dev-docs/wiki/Working-with-the-Logging-API)
@@ -60,11 +60,6 @@ https://your-domain.sharepoint.com/_layouts/15/workbench.aspx
   - [PnP JS. Working With: Logging](https://github.com/SharePoint/PnP-JS-Core/wiki/Working-With:-Logging)
   - [React component logging with TypeScript](https://github.com/pepaar/typescript-webpack-react-redux-boilerplate/blob/master/App/Components/BaseComponent.tsx)
 
-## Scenarios supported
-- SharePoint Web Part using **Script Editor** or **Content Editor Web Part**
-  - Consume it from [ES6 project](https://github.com/jquintozamora/react-taxonomypicker-consume-es6)
-  - Consume it from [TypeScript project](https://github.com/jquintozamora/react-taxonomypicker-consume-typescript)
-- **SharePoint Framework Web Part (SPFx)**
 
 
-<img src="https://telemetry.sharepointpnp.com/sp-dev-fx-webparts/samples/react-taxonomypicker" />
+<img src="https://telemetry.sharepointpnp.com/sp-dev-fx-webparts/samples/react-async-await-sp-pnp-js" />
