@@ -89,7 +89,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       //   - .usingCaching() will be using SessionStorage by default to cache the  results
       //   - .get() always returns a promise
       //   - await converts Promise<IResponseItem[]> into IResponse[]
-      let web: Web = new Web(this.props.pageContext.web.absoluteUrl);
+      const web: Web = new Web(this.props.pageContext.web.absoluteUrl);
       const response: IResponseItem[] = await web.lists
         .getByTitle(libraryName)
         .items
