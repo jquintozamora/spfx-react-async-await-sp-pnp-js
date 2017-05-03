@@ -5,7 +5,7 @@ import styles from "./AsyncAwaitPnPJs.module.scss";
 import { IFile, IResponseFile, IResponseItem } from "../interfaces"
 
 // import pnp and pnp logging system
-import pnp, { Logger, FunctionListener, LogEntry, LogLevel } from "sp-pnp-js";
+import { Logger, FunctionListener, LogEntry, LogLevel, Web } from "sp-pnp-js";
 // import SPFx Logging system
 import { Log } from "@microsoft/sp-core-library";
 
@@ -78,9 +78,9 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     );
   }
 
-  // Async functions were introduced with ES3/ES5 native support in TypeScript 2.1
+  // async functions were introduced with ES3/ES5 native support in TypeScript 2.1
   // https://blogs.msdn.microsoft.com/typescript/2016/12/07/announcing-typescript-2-1/
-  // Async function always return a Promise, on this scenario we return void Promise
+  // async function always return a Promise, on this scenario we return void Promise
   //   because we will not need it as we are directly setting the Component´s state
   private async _readAllFilesSize(libraryName: string): Promise<void> {
     try {
@@ -89,7 +89,8 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       //   - .usingCaching() will be using SessionStorage by default to cache the  results
       //   - .get() always returns a promise
       //   - await converts Promise<IResponseItem[]> into IResponse[]
-      const response: IResponseItem[] = await pnp.sp.web.lists
+      let web: Web = new Web(this.props.pageContext.web.absoluteUrl);
+      const response: IResponseItem[] = await web.lists
         .getByTitle(libraryName)
         .items
         .select("Title", "FileLeafRef")
