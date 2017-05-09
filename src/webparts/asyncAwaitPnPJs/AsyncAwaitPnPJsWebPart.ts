@@ -34,7 +34,6 @@ export default class AsyncAwaitPnPJsWebPart extends BaseClientSideWebPart<IAsync
         pageContext: this.context.pageContext
       }
     );
-
     ReactDom.render(element, this.domElement);
   }
 

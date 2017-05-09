@@ -98,7 +98,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     let listener = new FunctionListener((entry: LogEntry) => {
 
       // get React component name
-      const componentName: string = (this as any)._reactInternalInstance._currentElement.type.name;
+      const componentName: string = "AsyncAwaitPnPJs";
 
       // mapping betwween PnP JS Log types and SPFx logging methods
       // instead of using switch we use object easy syntax
@@ -114,7 +114,6 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       } else {
         formatedMessage = `Message: ${entry.message} Data: ${JSON.stringify(entry.data)}`;
       }
-
       // [SPFx Logging] Calculate method to invoke verbose, info, warn or error
       const method = logLevelConversion[LogLevel[entry.level]];
 
@@ -148,7 +147,6 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
         //.usingCaching()
         .get();
 
-      debugger;
 
       // use map to convert IResponseItem[] into our internal object IFile[]
       const items: IFile[] = response.map((item: IResponseItem) => {
@@ -165,6 +163,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     } catch (error) {
       // set a new state conserving the previous state + the new error
       this.setState({ ...this.state, errors: [...this.state.errors, error] });
+
     }
   }
 
