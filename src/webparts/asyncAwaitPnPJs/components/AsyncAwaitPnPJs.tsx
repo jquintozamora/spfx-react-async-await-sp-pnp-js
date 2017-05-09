@@ -95,10 +95,10 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     Logger.activeLogLevel = LogLevel.Info;
 
     // [PnP JS Logging] create a custom FunctionListener to integrate PnP JS and SPFx Logging systems
-    let listener = new FunctionListener((entry: LogEntry) => {
+    const listener = new FunctionListener((entry: LogEntry) => {
 
       // get React component name
-      const componentName: string = "AsyncAwaitPnPJs";
+      const componentName: string = (this as any)._reactInternalInstance._currentElement.props.description;
 
       // mapping betwween PnP JS Log types and SPFx logging methods
       // instead of using switch we use object easy syntax
@@ -114,6 +114,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       } else {
         formatedMessage = `Message: ${entry.message} Data: ${JSON.stringify(entry.data)}`;
       }
+
       // [SPFx Logging] Calculate method to invoke verbose, info, warn or error
       const method = logLevelConversion[LogLevel[entry.level]];
 
@@ -137,7 +138,6 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       //   - .usingCaching() will be using SessionStorage by default to cache the  results
       //   - .get() always returns a promise
       //   - await converts Promise<IResponseItem[]> into IResponse[]
-      // To use async / await on IE11 need polyfill: https://github.com/Microsoft/TypeScript/issues/12469
       const web: Web = new Web(this.props.pageContext.web.absoluteUrl);
       const response: IResponseItem[] = await web.lists
         .getByTitle(libraryName)
