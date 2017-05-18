@@ -147,7 +147,6 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
         .usingCaching()
         .get();
 
-
       // use map to convert IResponseItem[] into our internal object IFile[]
       const items: IFile[] = response.map((item: IResponseItem) => {
         return {
@@ -159,6 +158,15 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
 
       // set our Component´s State
       this.setState({ ...this.state, items });
+
+      // intentionally set wrong query to see console errors...
+      const failResponse: IResponseItem[] = await web.lists
+        .getByTitle(libraryName)
+        .items
+        .select("Title", "FileLeafRef", "File/Length", "NonExistingColumn")
+        .expand("File/Length")
+        .usingCaching()
+        .get();
 
     } catch (error) {
       // set a new state conserving the previous state + the new error
