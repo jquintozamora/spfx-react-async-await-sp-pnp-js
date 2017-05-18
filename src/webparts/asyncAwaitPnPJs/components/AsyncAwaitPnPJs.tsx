@@ -2,7 +2,7 @@ import * as React from "react";
 import styles from "./AsyncAwaitPnPJs.module.scss";
 
 // import interfaces
-import { IFile, IResponseFile, IResponseItem } from "../interfaces"
+import { IFile, IResponseItem } from "../interfaces";
 
 // import pnp and pnp logging system
 import { Logger, FunctionListener, LogEntry, LogLevel, Web } from "sp-pnp-js";
@@ -59,9 +59,9 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
                 <div className={styles.right}>Size (KB)</div>
                 <div className={styles.clear + " " + styles.header}></div>
               </div>
-              {this.state.items.map((item) => {
+              {this.state.items.map((item, idx) => {
                 return (
-                  <div className={styles.row}>
+                  <div key={idx} className={styles.row}>
                     <div className={styles.left}>{item.Name}</div>
                     <div className={styles.right}>{(item.Size / 1024).toFixed(2)}</div>
                     <div className={styles.clear}></div>
@@ -144,7 +144,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
         .items
         .select("Title", "FileLeafRef", "File/Length")
         .expand("File/Length")
-        //.usingCaching()
+        .usingCaching()
         .get();
 
 
@@ -157,7 +157,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
         };
       });
 
-      // Set our Component´s State
+      // set our Component´s State
       this.setState({ ...this.state, items });
 
     } catch (error) {
@@ -179,7 +179,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
           })
         }
       </div>
-      : null
+      : null;
 
   }
 
