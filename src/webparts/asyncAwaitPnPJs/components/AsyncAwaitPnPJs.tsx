@@ -179,8 +179,8 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
       <div style={{ color: "orangered" }} >
         <div>Errors:</div>
         {
-          this.state.errors.map((item) => {
-            return (<div>{JSON.stringify(item)}</div>);
+          this.state.errors.map((item, idx) => {
+            return (<div key={idx} >{JSON.stringify(item)}</div>);
           })
         }
       </div>
