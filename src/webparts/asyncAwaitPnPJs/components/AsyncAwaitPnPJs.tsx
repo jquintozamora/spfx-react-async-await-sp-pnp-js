@@ -81,7 +81,7 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     );
   }
 
-  private _enableLogging() {
+  private _enableLogging(): void {
     ////////////////////////////////////////////////////////////////////////
     // enable Logging system
     ////////////////////////////////////////////////////////////////////////
@@ -125,7 +125,6 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     // [PnP JS Logging] Once create the custom listerner we should subscribe to it
     Logger.subscribe(listener);
   }
-
 
   // async functions were introduced with ES3/ES5 native support in TypeScript 2.1
   // https://blogs.msdn.microsoft.com/typescript/2016/12/07/announcing-typescript-2-1/
@@ -171,10 +170,8 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
     } catch (error) {
       // set a new state conserving the previous state + the new error
       this.setState({ ...this.state, errors: [...this.state.errors, error] });
-
     }
   }
-
 
   private _gerErrors() {
     return this.state.errors.length > 0
@@ -188,7 +185,6 @@ export default class AsyncAwaitPnPJs extends React.Component<IAsyncAwaitPnPJsPro
         }
       </div>
       : null;
-
   }
 
 }
